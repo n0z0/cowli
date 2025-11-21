@@ -1,10 +1,10 @@
 package main
 
 import (
-	"bufio" // Untuk membaca input
+	"bufio"
 	"fmt"
-	"os"      // Untuk mengakses standard input (keyboard)
-	"strings" // Untuk membersihkan input dari spasi atau karakter baru
+	"os"
+	"strings"
 	"time"
 
 	"github.com/masterzen/winrm"
@@ -17,7 +17,7 @@ func main() {
 	// --- Minta Input dari User ---
 	fmt.Print("Masukkan Host Target: ")
 	host, _ := reader.ReadString('\n')
-	host = strings.TrimSpace(host) // Hapus spasi dan karakter newline di akhir
+	host = strings.TrimSpace(host)
 
 	fmt.Print("Masukkan Username: ")
 	username, _ := reader.ReadString('\n')
@@ -34,22 +34,21 @@ func main() {
 		host,           // Gunakan host dari input user
 		5985,           // Port HTTP untuk WinRM
 		false,          // Tidak menggunakan HTTPS
-		false,          // insecure (bool)
+		true,           // Tetap true untuk menghindari bug
 		nil,            // caCert ([]byte)
 		nil,            // cert ([]byte)
 		nil,            // key ([]byte)
 		time.Second*60, // timeout (time.Duration)
 	)
 
-	// --- Kredensial & Parameter ---
-	// Gunakan username dan password dari input user
-	// PERBAIKAN: Hapus tanda kurung () karena DefaultParameters adalah variabel, bukan fungsi
-	params := winrm.DefaultParameters
-	params.TransportDecorator = func() winrm.Transporter {
-		return &winrm.ClientAuthRequest{} // Menggunakan Basic Auth
-	}
-
-	client, err := winrm.NewClientWithParameters(endpoint, username, password, params)
+	// --- Kredensial ---
+	// PERUBAHAN: Gunakan NewClient yang lebih sederhana
+	// Kita tidak lagi menggunakan 'params' dan 'TransportDecorator'
+	client, err := winrm.NewClient(
+		endpoint,
+		username, // Gunakan username dari input user
+		password, // Gunakan password dari input user
+	)
 	if err != nil {
 		panic(err)
 	}
