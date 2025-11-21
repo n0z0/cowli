@@ -11,5 +11,5 @@ Enable-PSRemoting -Force
 
 New-LocalUser -Name Username -Password (ConvertTo-SecureString "Passwordnya213" -AsPlainText -Force) -PasswordNeverExpires -Description "User untuk akses WinRM"
 
-Add-LocalGroupMember -Group "Administrators" -Member Astrajingga
+Add-LocalGroupMember -Group "Administrators" -Member Username
 ```
