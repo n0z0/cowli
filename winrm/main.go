@@ -47,7 +47,7 @@ func main() {
 	// --- PERBAIKAN UTAMA ---
 	// Bungkus perintah PowerShell di dalam pemanggilan powershell.exe
 	// Perintah ini akan dieksekusi oleh shell default (cmd.exe), yang kemudian memanggil PowerShell
-	psCommand := `powershell.exe -Command "Get-Process | Select-Object -First 5 | ConvertTo-Json"`
+	psCommand := `dir`
 
 	fmt.Printf("Menjalankan perintah: %s\n", psCommand)
 
