@@ -11,10 +11,8 @@ import (
 )
 
 func main() {
-	// Buat reader untuk membaca input dari keyboard
 	reader := bufio.NewReader(os.Stdin)
 
-	// --- Minta Input dari User ---
 	fmt.Print("Masukkan Host Target: ")
 	host, _ := reader.ReadString('\n')
 	host = strings.TrimSpace(host)
@@ -29,32 +27,27 @@ func main() {
 
 	fmt.Println("\n--- Menghubungkan ke", host, "---")
 
-	// --- Konfigurasi Koneksi ---
 	endpoint := winrm.NewEndpoint(
-		host,           // Gunakan host dari input user
-		5985,           // Port HTTP untuk WinRM
-		false,          // Tidak menggunakan HTTPS
-		true,           // Tetap true untuk menghindari bug
-		nil,            // caCert ([]byte)
-		nil,            // cert ([]byte)
-		nil,            // key ([]byte)
-		time.Second*60, // timeout (time.Duration)
+		host,
+		5985,
+		false, // https
+		true,  // insecure (tetap true untuk menghindari bug)
+		nil,
+		nil,
+		nil,
+		time.Second*60,
 	)
 
-	// --- Kredensial ---
-	// PERUBAHAN: Gunakan NewClient yang lebih sederhana
-	// Kita tidak lagi menggunakan 'params' dan 'TransportDecorator'
-	client, err := winrm.NewClient(
-		endpoint,
-		username, // Gunakan username dari input user
-		password, // Gunakan password dari input user
-	)
+	// Gunakan NewClient yang lebih sederhana
+	client, err := winrm.NewClient(endpoint, username, password)
 	if err != nil {
 		panic(err)
 	}
 
-	// --- Eksekusi Perintah PowerShell ---
-	psCommand := "Get-Process | Select-Object -First 5 | ConvertTo-Json"
+	// --- PERBAIKAN UTAMA ---
+	// Bungkus perintah PowerShell di dalam pemanggilan powershell.exe
+	// Perintah ini akan dieksekusi oleh shell default (cmd.exe), yang kemudian memanggil PowerShell
+	psCommand := `powershell.exe -Command "Get-Process | Select-Object -First 5 | ConvertTo-Json"`
 
 	fmt.Printf("Menjalankan perintah: %s\n", psCommand)
 
